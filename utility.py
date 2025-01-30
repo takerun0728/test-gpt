@@ -1,4 +1,5 @@
 import numpy as np
+from collections import Counter
 
 class DataLoader:
     def __init__(self, x, y, batch_size, seed=0):
@@ -24,6 +25,17 @@ class DataLoader:
             self.start = end
             end = False
         return x, y, end
+
+class UnigramSampler:
+    def __init__(self, corpus, power):
+        counts = Counter(corpus)
+        self.vocabs = np.arange(max(counts.keys()))
+        self.prob = np.array([counts[i] for i in range(len(self.vocabs))])
+        self.prob = np.power(self.prob, power)
+        self.prob /= self.prob.sum()
+        
+    def get_samples(self, sample_size):
+        return np.random.choice(self.vocabs, sample_size, True, self.prob)
 
 def preprocess(text):
     text = text.lower()
@@ -94,4 +106,12 @@ def ppmi(C, eps=1e-8):
     S = S @ S.T
     return np.maximum(0, np.log2(C * N / (S + eps)))
 
+def create_contexts_target(corpus, window_size=1):
+    target = corpus[window_size:-window_size]
+    contexts = [corpus[i-window_size:i]+corpus[i+1:i+window_size+1] for i in range(window_size, len(corpus)-window_size)]
+    return np.array(contexts), np.array(target)
 
+def id2onehot(x, word_dim):
+    onehot = np.zeros((len(x), word_dim))
+    onehot[np.arange(len(x)), x] = 1
+    return onehot

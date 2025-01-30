@@ -1,10 +1,9 @@
 import numpy as np
-from model import Model
 
 EPS = 10e-7
 
 class Optimizer:
-    def __init__(self, model: Model):
+    def __init__(self, model):
         self.model = model
 
     def update(self):

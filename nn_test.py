@@ -13,7 +13,7 @@ HIDDEN_SIZE = 5
 x, t = spiral.load_data()
 out_dim = t.shape[1]
 model = TwoLayerSoftMaxNet(x.shape[1], HIDDEN_SIZE, out_dim)
-optimizer = Adam(model, lr=0.005)
+optimizer = Adam(model, lr=0.01)
 t = np.argmax(t, axis=1, keepdims=True)
 loader = DataLoader(x, t, BATCH_SIZE)
 
